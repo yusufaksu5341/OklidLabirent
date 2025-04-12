@@ -1,87 +1,111 @@
-# Project Title
+# C dilinde Labirent Oyunu
 
-One Paragraph of project description goes here
 
-## Getting Started
+## Aşama 1
+Kullanıcıdan:
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to **deploy**(Bold Example) the project on a live system.
+* Genişlik 
+* Yükseklik
+* Kişi Sayısı
+* Kişilerin Kordinatları
+* Kullanıcının Kordinatı
+* Tespit Mesafesi
+* Uzaklık Methodu
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+İstenir
 
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
+    // Kullanıcıdan Verileri al
+    printf("Labirent genişliği: ");
+    scanf("%d", &genislik);
+    printf("Labirent yüksekliği: ");
+    scanf("%d", &yukseklik);
+    printf("Labirentte kaç kişi var? ");
+    scanf("%d", &kisiSayisi);
+    for (i = 0; i < kisiSayisi; i++) {
+        printf("Kişi %d koordinatları (x y): ", i + 1);
+        scanf("%d %d", &kisiler[i].x, &kisiler[i].y);
+    }
+    printf("Kendi konumunuz (x y): ");
+    scanf("%d %d", &kullaniciX, &kullaniciY);
+    printf("Tespit mesafesi: ");
+    scanf("%d", &tespitMesafesi);
+    printf("Uzaklık metodu seçiniz (1: Öklid, 2: Manhattan): ");
+    scanf("%d", &secim);
 
 ```
-Give an example
+
+## Aşama 2 
+
+Alınan veriler değişkenlere atanır. Ardından struct içinde x,y ve mesafe tanımlanır,
+```
+typedef struct {
+    int x;
+    int y;
+    double mesafe;
+} 
+
 ```
 
-## Deployment
+## Aşama 3
 
-Add additional notes about how to deploy this on a live system
+Seçilen methoda göre işlem yapılır.
+```
+// Öklid
+double oklidMesafesiHesapla(int x1, int y1, int x2, int y2) {
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
 
-## Built With
+// Manhattan
+double manhattanMesafesiHesapla(int x1, int y1, int x2, int y2) {
+    return abs(x2 - x1) + abs(y2 - y1);
+}
+```
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+## Aşama 4
 
-## Contributing
+En yakın ve en uzak kişi bulunur.
+```
+void enYakinVeEnUzakKisiyiBul(Kisi kisiler[], int sayi, Kisi *enYakin, Kisi *enUzak) {
+    int i;
+    enYakin->mesafe = enUzak->mesafe = kisiler[0].mesafe;
+    enYakin->x = enUzak->x = kisiler[0].x;
+    enYakin->y = enUzak->y = kisiler[0].y;
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+    for (i = 1; i < sayi; i++) {
+        if (kisiler[i].mesafe < enYakin->mesafe) {
+            enYakin->mesafe = kisiler[i].mesafe;
+            enYakin->x = kisiler[i].x;
+            enYakin->y = kisiler[i].y;
+        }
+        if (kisiler[i].mesafe > enUzak->mesafe) {
+            enUzak->mesafe = kisiler[i].mesafe;
+            enUzak->x = kisiler[i].x;
+            enUzak->y = kisiler[i].y;
+        }
+    }
+}
+```
+## Aşama 5
 
-## Versioning
+Son olarak main fonksiyonun içinde tüm verilerin çıktısı ekrana verilir.
+```
+    printf("Sizin noktanız: (%d, %d)\n", kullaniciX, kullaniciY);
+    printf("Etrafınızdaki kişiler (%d mesafe içinde olanlar):\n", tespitMesafesi);
+    for (i = 0; i < kisiSayisi; i++) {
+        if (secim == 1) {
+            kisiler[i].mesafe = oklidMesafesiHesapla(kullaniciX, kullaniciY, kisiler[i].x, kisiler[i].y);
+        } else {
+            kisiler[i].mesafe = manhattanMesafesiHesapla(kullaniciX, kullaniciY, kisiler[i].x, kisiler[i].y);
+        }
+        if (kisiler[i].mesafe <= tespitMesafesi) {
+            printf("Kişi %d: (%d, %d) - Uzaklık: %.2f\n", i + 1, kisiler[i].x, kisiler[i].y, kisiler[i].mesafe);
+        }
+    }
+    Kisi enYakin, enUzak;
+    enYakinVeEnUzakKisiyiBul(kisiler, kisiSayisi, &enYakin, &enUzak);
+    printf("En yakın kişi: (%d, %d) - Uzaklık: %.2f\n", enYakin.x, enYakin.y, enYakin.mesafe);
+    printf("En uzak kişi: (%d, %d) - Uzaklık: %.2f\n", enUzak.x, enUzak.y, enUzak.mesafe);
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+```
 
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
