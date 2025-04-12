@@ -6,8 +6,8 @@ typedef struct {
     int x;
     int y;
     double mesafe;
-} Kisi;
-
+}
+Kisi;
 double oklidMesafesiHesapla(int x1, int y1, int x2, int y2);
 double manhattanMesafesiHesapla(int x1, int y1, int x2, int y2);
 void enYakinVeEnUzakKisiyiBul(Kisi kisiler[], int sayi, Kisi *enYakin, Kisi *enUzak);
